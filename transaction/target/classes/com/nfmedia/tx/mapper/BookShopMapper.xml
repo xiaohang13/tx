@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfmedia.tx.mapper.BookShopMapper">
+
+	<select id="findBookPriceByIsbn" parameterType="String" resultType="int">
+		SELECT price FROM book WHERE isbn = #{value}
+	</select>
+	
+	<update id="updateBookStock" parameterType="String" >
+		UPDATE stock SET stock = stock - 1 WHERE isbn = #{value}
+	</update>
+	
+	<update id="updateUserBalance">
+		UPDATE account SET balance = balance - #{price} WHERE username = #{username}
+	</update>
+	
+	<select id="findBookStockCountByIsbn" parameterType="String" resultType="int">
+		SELECT stock FROM stock WHERE isbn = #{isbn}
+	</select>
+	
+	<select id="findAccountBalanceByName" parameterType="String" resultType="int">
+		SELECT balance FROM account WHERE username = #{username}
+	</select>
+	
+</mapper>

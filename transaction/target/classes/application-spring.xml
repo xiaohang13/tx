@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+	<!-- 自动扫描 -->
+	<context:component-scan base-package="com.nfmedia.tx"/>
+
+	<!-- 引入配置文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+
+	<!-- 配置数据源,destroy-method="close"的作用是当数据库连接不使用的时候,就把该连接重新放到数据池中,方便下次使用调用. -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${java.driver}" />
+		<property name="url" value="${java.url}" />
+		<property name="username" value="${java.username}" />
+		<property name="password" value="${java.password}" />
+
+		<!-- 初始化连接大小 -->
+		<property name="initialSize" value="${java.initialSize}"></property>
+		<!-- 连接池最大数量 -->
+		<property name="maxTotal" value="${java.maxActive}"></property>
+		<!-- 连接池最大空闲 -->
+		<property name="maxIdle" value="${java.maxIdle}"></property>
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="${java.minIdle}"></property>
+	</bean>
+	
+	<!-- sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 数据库连接池 -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 加载mybatis的全局配置文件 -->
+		<property name="configLocation" value="classpath:sqlMapConfig.xml"/>
+	</bean>
+	
+	<!-- mapper扫描器 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 扫描包路径 -->
+		<property name="basePackage" value="com.nfmedia.tx.mapper"></property>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+
+</beans>
